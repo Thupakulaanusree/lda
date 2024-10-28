@@ -1,0 +1,49 @@
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+from sklearn.discriminant_analysis import LinearDiscriminantAnalysis as LDA
+from sklearn.decomposition import PCA
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# Load the dataset
+file_path ='/content/Iris (2).csv'  # Replace with your file path
+iris_df = pd.read_csv(file_path)
+
+# Separate features and target
+X = iris_df.iloc[:, :-1]
+y = iris_df['Species']
+
+# Standardize the features
+scaler = StandardScaler()
+X_standardized = scaler.fit_transform(X)
+
+# Apply LDA to reduce to 2 components
+lda = LDA(n_components=2)
+X_lda = lda.fit_transform(X_standardized, y)
+lda_df = pd.DataFrame(X_lda, columns=['LDA1', 'LDA2'])
+lda_df['Species'] = y
+
+# Plot the LDA result
+plt.figure(figsize=(8, 6))
+sns.scatterplot(data=lda_df, x='LDA1', y='LDA2', hue='Species', palette='viridis', s=70)
+plt.title('LDA: Iris Dataset (2 Components)')
+plt.xlabel('LDA1')
+plt.ylabel('LDA2')
+plt.legend(title='Species')
+plt.show()
+
+# Apply PCA for comparison
+pca = PCA(n_components=2)
+X_pca = pca.fit_transform(X_standardized)
+pca_df = pd.DataFrame(X_pca, columns=['PCA1', 'PCA2'])
+pca_df['Species'] = y
+
+# Plot the PCA result
+plt.figure(figsize=(8, 6))
+sns.scatterplot(data=pca_df, x='PCA1', y='PCA2', hue='Species', palette='viridis', s=70)
+plt.title('PCA: Iris Dataset (2 Components)')
+plt.xlabel('PCA1')
+plt.ylabel('PCA2')
+plt.legend(title='Species')
+plt.show()
